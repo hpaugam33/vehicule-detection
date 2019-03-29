@@ -1,1 +1,23 @@
 Vehicle Type/Size, Vehicle Movement Direction, Vehicle Speed (km/h), Time (s)
+car,down,n.a.,1
+person,up,n.a.,1
+car,down,n.a.,1
+car,down,n.a.,3
+car,down,49.16543960571289,8
+car,down,n.a.,8
+car,down,n.a.,9
+car,down,n.a.,9
+car,up,-938.7489954630535,9
+car,down,29.20217514038086,23
+car,down,26.47956212361654,31
+car,up,n.a.,31
+car,down,19.422308603922527,34
+car,down,n.a.,35
+car,up,n.a.,35
+car,up,-517.9577191670736,36
+car,up,n.a.,38
+car,up,-11.381053924560547,38
+car,down,28.498368036179315,38
+bus,down,n.a.,39
+car,down,n.a.,42
+traffic light,down,35.017712910970054,42

@@ -41,19 +41,22 @@ if tf.__version__ < '1.4.0':
                       )
 
 
-# input video
-live = True
+# input video or use webcam
 
-if live == True :
+if sys.argv[1] == "use_cam" :
     cap = cv2.VideoCapture(1) #0 for the built-in webcam 1 for another one plug in USB
-else :
+if  sys.argv[1] == "use_videofile" :
     filepath = askopenfilename(title="Open your video",filetypes=[('mkv files','.mkv'), ('mp4 files','.mp4'), ('avi files','.avi'),('all files','.*')])
     cap = cv2.VideoCapture(filepath)
 
 
 
+
 width = cap.get(3)
 height = cap.get(4)
+
+ROI_height = height/1.7
+#print(int(ROI_height))
 
 #Time of the detected object
 time=  cap.get(0)
@@ -159,14 +162,14 @@ def object_detection_function():
                     vis_util.visualize_boxes_and_labels_on_image_array(
                     cap.get(1),
                     input_frame,
+                    int(ROI_height),
                     np.squeeze(boxes),
                     np.squeeze(classes).astype(np.int32),
                     np.squeeze(scores),
                     category_index,
                     time_s,
                     use_normalized_coordinates=True,
-                    line_thickness=3,
-                    )
+                    line_thickness=3)
 
                 total_passed_vehicle = total_passed_vehicle + counter
 
@@ -185,17 +188,17 @@ def object_detection_function():
 
                 # when the vehicle passed over line and counted, make the color of ROI line green
                 line_width = int(width);
-                line_height = int(height/1.2);
+                line_height = int(height/1.1);
                 if counter == 1:
-                    cv2.line(input_frame, (0, line_height), (line_width, line_height), (0, 0xFF, 0), 5)
+                    cv2.line(input_frame, (0, int(ROI_height)), (line_width, int(ROI_height)), (0, 0xFF, 0), 5)
                 else:
-                    cv2.line(input_frame, (0, line_height), (line_width, line_height), (0, 0, 0xFF), 5)
+                    cv2.line(input_frame, (0, int(ROI_height)), (line_width, int(ROI_height)), (0, 0, 0xFF), 5)
                 # insert information text to video frame
                 cv2.rectangle(input_frame, (10, 275), (230, 337), (180, 132, 109), -1)
                 cv2.putText(
                     input_frame,
                     'ROI Line',
-                    ((int)(line_width*0.8), line_height -30),
+                    ((int)(line_width*0.8), int(ROI_height) -30),
                     font,
                     0.6,
                     (0, 0, 0xFF),

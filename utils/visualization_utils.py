@@ -37,7 +37,6 @@ from utils.color_recognition_module import color_recognition_api
 
 # Variables
 is_vehicle_detected = [0]
-ROI_POSITION = 200
 
 _TITLE_LEFT_MARGIN = 10
 _TITLE_TOP_MARGIN = 10
@@ -98,6 +97,7 @@ def encode_image_array_as_png_str(image):
   return png_string
 
 def draw_bounding_box_on_image_array(current_frame_number, image,
+                                     ROI_height,
                                      ymin,
                                      xmin,
                                      ymax,
@@ -124,13 +124,14 @@ def draw_bounding_box_on_image_array(current_frame_number, image,
       coordinates as absolute.
   """
   image_pil = Image.fromarray(np.uint8(image)).convert('RGB')
-  is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image(current_frame_number,image_pil, ymin, xmin, ymax, xmax, time, color,
+  is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image(current_frame_number,image_pil,ROI_height, ymin, xmin, ymax, xmax, time, color,
                              thickness, display_str_list,
                              use_normalized_coordinates)
   np.copyto(image, np.array(image_pil))
   return is_vehicle_detected, csv_line, update_csv
 
-def draw_bounding_box_on_image(current_frame_number,image,
+def draw_bounding_box_on_image(current_frame_number,image, 
+                               ROI_height,
                                ymin,
                                xmin,
                                ymax,
@@ -180,8 +181,9 @@ def draw_bounding_box_on_image(current_frame_number,image,
   image_temp = numpy.array(image)
   detected_vehicle_image = image_temp[int(top):int(bottom), int(left):int(right)]
 
-  if(bottom > ROI_POSITION): # if the vehicle get in ROI area, vehicle predicted_speed predicted_color algorithms are called - 200 is an arbitrary value, for my case it looks very well to set position of ROI line at y pixel 200
-        predicted_direction, predicted_speed,  is_vehicle_detected, update_csv = speed_prediction.predict_speed(top, bottom, right, left, current_frame_number, detected_vehicle_image, ROI_POSITION)
+  if(bottom > ROI_height and top < ROI_height): # if the vehicle get in ROI area, vehicle predicted_speed predicted_color algorithms are called - 200 is an arbitrary value, for my case it looks very well to set position of ROI line at y pixel 200
+        predicted_direction, predicted_speed,  is_vehicle_detected, update_csv = speed_prediction.predict_speed_down(top, bottom, right, left, current_frame_number, detected_vehicle_image, ROI_height)
+        
 
   predicted_color = color_recognition_api.color_recognition(detected_vehicle_image)
   
@@ -193,7 +195,7 @@ def draw_bounding_box_on_image(current_frame_number,image,
   # If the total height of the display strings added to the top of the bounding
   # box exceeds the top of the image, stack the strings below the bounding box
   # instead of above.
-  display_str_list[0] = predicted_color + " " + display_str_list[0]
+  display_str_list[0] =  display_str_list[0]
   csv_line = str (predicted_direction) + "," + str(predicted_speed) + "," + str(time) # csv line created
   display_str_heights = [font.getsize(ds)[1] for ds in display_str_list]
 
@@ -409,7 +411,8 @@ def draw_mask_on_image_array(image, mask, color='red', alpha=0.7):
   np.copyto(image, np.array(pil_image.convert('RGB')))
 
 
-def visualize_boxes_and_labels_on_image_array(current_frame_number,image,
+def visualize_boxes_and_labels_on_image_array(current_frame_number,image, 
+                                              ROI_height,
                                               boxes,
                                               classes,
                                               scores,
@@ -509,6 +512,7 @@ def visualize_boxes_and_labels_on_image_array(current_frame_number,image,
     if (("car" in display_str_list[0]) or ("truck" in display_str_list[0]) or ("bus" in display_str_list[0]) or ("person" in display_str_list[0]) or ("bicycle" in display_str_list[0])  or ("motorcycle" in display_str_list[0]) ):
             is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image_array(current_frame_number,
                 image,
+                ROI_height,
                 ymin,
                 xmin,
                 ymax,

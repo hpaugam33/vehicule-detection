@@ -267,7 +267,7 @@ VIDEO_FOLDER = 'video dataset'
 #    askopenfilename(title="Open your video",filetypes=[('mp4 files','.mp4'), ('mkv files','.mkv'),('avi files','.avi'),('all files','.*')])
 
 #cap = cv2.VideoCapture(filepath)
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 #frame dimension
 width = cap.get(3)
@@ -377,7 +377,7 @@ Button (lineParameters, text = "Valider", command=retour).pack(side = RIGHT)
 
 
 
-"""
+
 #Scales
 value = DoubleVar()
 horizontalScale = Scale(configFrame, orient='horizontal', from_=0, to=10, resolution=0.1, tickinterval=2, length=300, label='Horizontal Size')
@@ -387,7 +387,7 @@ horizontalScale.pack()
 verticalScale.pack()
 
 
-"""
+
 
 
 
